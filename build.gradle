@@ -26,9 +26,9 @@ dependencies {
     compileOnly group: "org.projectlombok", name: "lombok", version: "1.18.12"
     annotationProcessor group: "org.projectlombok", name: "lombok", version: "1.18.12"
 
-    targetPlatformBoms group: "com.liferay.portal", name: "release.portal.bom", version: "7.2.0"
-    targetPlatformBoms group: "com.liferay.portal", name: "release.portal.bom.compile.only", version: "7.2.0"
-    targetPlatformBoms group: "com.liferay.portal", name: "release.portal.bom.third.party", version: "7.2.0"
+    targetPlatformBoms group: "com.liferay.portal", name: "release.portal.bom", version: "7.2.1"
+    targetPlatformBoms group: "com.liferay.portal", name: "release.portal.bom.compile.only", version: "7.2.1"
+    targetPlatformBoms group: "com.liferay.portal", name: "release.portal.bom.third.party", version: "7.2.1"
 }
 
 def defaultEncoding = "UTF-8"

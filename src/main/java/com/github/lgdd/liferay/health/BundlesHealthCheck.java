@@ -24,6 +24,13 @@ import org.slf4j.LoggerFactory;
 )
 public class BundlesHealthCheck {
 
+  /**
+   * Verify every bundle state, if checked in the configuration.
+   *
+   * @return a response entity to be sent in the HTTP response body as JSON
+   * @see HealthCheckResponse
+   * @see HealthCheckStatus
+   */
   public HealthCheckResponse verify() {
 
     String message = "No issues with bundles";
@@ -46,7 +53,16 @@ public class BundlesHealthCheck {
                               .build();
   }
 
-  public HealthCheckResponse verify(Set<String> requiredBundleSymbolicNames) {
+  /**
+   * Verify if the required bundles from the configuration are present and in a proper state, i.e.
+   * ACTIVE or RESOLVED if the bundle is a fragment.
+   *
+   * @param requiredBundleSymbolicNames list of required bundle symbolic names
+   * @return a response entity to be sent in the HTTP response body as JSON
+   * @see HealthCheckResponse
+   * @see HealthCheckStatus
+   */
+  public HealthCheckResponse verifyBundles(Set<String> requiredBundleSymbolicNames) {
 
     String message = "No issues with bundles";
     List<String> issues = new ArrayList<>();
@@ -79,7 +95,7 @@ public class BundlesHealthCheck {
     issues.addAll(_listResolvedBundles(_context.getBundles()));
     issues.addAll(_listInstalledBundles(_context.getBundles()));
 
-    if(!issues.isEmpty()) {
+    if (!issues.isEmpty()) {
       message = "Found some required bundles in an undesired state.";
       return HealthCheckResponse.builder()
                                 .status(HealthCheckStatus.DOWN)

@@ -16,6 +16,13 @@ import org.slf4j.LoggerFactory;
 )
 public class ComponentsHealthCheck {
 
+  /**
+   * Verify if unregistered components are present.
+   *
+   * @return HTTP response corresponding to the result
+   * @see HealthCheckResponse
+   * @see HealthCheckConfiguration
+   */
   public HealthCheckResponse verify() {
 
     List<String> issues = new ArrayList<>();

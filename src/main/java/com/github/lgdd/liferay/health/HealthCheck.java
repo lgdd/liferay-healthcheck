@@ -54,6 +54,19 @@ public class HealthCheck
     );
   }
 
+  /**
+   * Verify if the required bundles from the configuration are present and in a proper state, i.e.
+   * ACTIVE or RESOLVED if the bundle is a fragment.
+   *
+   * @param requiredBundleSymbolicNames list of required bundle symbolic names
+   * @param isVerificationRequired      true if all bundle states need to be verified (passed to the
+   *                                    next method)
+   * @return HTTP response corresponding to the result
+   * @see HealthCheckResponse
+   * @see HealthCheckConfiguration
+   * @see BundlesHealthCheck#verifyBundles
+   * @see HealthCheck#_verifyBundlesStates
+   */
   private Response _verifyRequiredBundles(String[] requiredBundleSymbolicNames,
       boolean isVerificationRequired) {
 
@@ -63,7 +76,8 @@ public class HealthCheck
               .collect(Collectors.toSet());
 
     if (!bundleSymbolicNames.isEmpty()) {
-      HealthCheckResponse requiredBundlesResponse = _bundlesHealthCheck.verify(bundleSymbolicNames);
+      HealthCheckResponse requiredBundlesResponse = _bundlesHealthCheck
+          .verifyBundles(bundleSymbolicNames);
       if (HealthCheckStatus.DOWN.equals(requiredBundlesResponse.getStatus())) {
         return Response.serverError()
                        .entity(requiredBundlesResponse.toJson())
@@ -73,6 +87,14 @@ public class HealthCheck
     return _verifyBundlesStates(isVerificationRequired);
   }
 
+  /**
+   * Verify every bundle state, if checked in the configuration.
+   *
+   * @param hasToVerifyBundlesStates true if bundle states has to be verified
+   * @return HTTP response corresponding to the result
+   * @see HealthCheckResponse
+   * @see HealthCheckConfiguration
+   */
   private Response _verifyBundlesStates(boolean hasToVerifyBundlesStates) {
 
     if (hasToVerifyBundlesStates) {
@@ -88,6 +110,14 @@ public class HealthCheck
     return _verifyComponents();
   }
 
+  /**
+   * Verify if unregistered components are present.
+   *
+   * @return HTTP response corresponding to the result
+   * @see HealthCheckResponse
+   * @see HealthCheckConfiguration
+   * @see ComponentsHealthCheck#verify
+   */
   private Response _verifyComponents() {
 
     final HealthCheckResponse componentsResponse = _componentsHealthCheck.verify();

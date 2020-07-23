@@ -1,0 +1,10 @@
+version: '2.1'
+services:
+  liferay:
+    build:
+      dockerfile: Dockerfile
+      context: .
+    ports:
+      - 8080:8080
+    volumes:
+      - ./build/libs:/opt/liferay/osgi/modules

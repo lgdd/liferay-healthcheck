@@ -1,0 +1,63 @@
+version = "1.0.0"
+
+apply plugin: "java"
+apply plugin: "com.liferay.target.platform"
+apply plugin: "com.liferay.plugin"
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+dependencies {
+    compileOnly group: "biz.aQute.bnd", name: "biz.aQute.bnd.annotation", version: "4.2.0"
+
+    compileOnly group: "org.slf4j", name: "slf4j-api"
+
+    compileOnly group: "javax.ws.rs", name: "javax.ws.rs-api"
+
+    compileOnly group: "com.liferay.portal", name: "com.liferay.portal.kernel"
+    compileOnly group: "com.liferay", name: "com.liferay.portal.configuration.metatype.api"
+
+    compileOnly group: "org.osgi", name: "org.osgi.core"
+    compileOnly group: "org.osgi", name: "org.osgi.service.jaxrs"
+    compileOnly group: "org.osgi", name: "org.osgi.service.component.annotations"
+
+    compileOnly group: "org.apache.felix", name: "org.apache.felix.dependencymanager", version: "4.6.0"
+
+    compileOnly group: "org.projectlombok", name: "lombok", version: "1.18.12"
+    annotationProcessor group: "org.projectlombok", name: "lombok", version: "1.18.12"
+
+    targetPlatformBoms group: "com.liferay.portal", name: "release.portal.bom", version: "7.2.0"
+    targetPlatformBoms group: "com.liferay.portal", name: "release.portal.bom.compile.only", version: "7.2.0"
+    targetPlatformBoms group: "com.liferay.portal", name: "release.portal.bom.third.party", version: "7.2.0"
+}
+
+def defaultEncoding = "UTF-8"
+
+buildscript {
+    dependencies {
+        classpath group: "com.liferay", name: "com.liferay.gradle.plugins.target.platform", version: "2.1.23"
+        classpath group: 'com.liferay', name: 'com.liferay.gradle.plugins', version: '10.0.18'
+    }
+    repositories {
+        jcenter()
+        mavenCentral()
+        maven {
+            url "https://repository-cdn.liferay.com/nexus/content/groups/public"
+        }
+    }
+}
+
+repositories {
+    mavenCentral()
+    jcenter()
+    maven { url "http://repository.jboss.org/nexus/content/groups/public-jboss" }
+    maven { url "http://repository.apache.org/content/groups/public" }
+    maven { url "http://repository.springsource.com/maven/bundles/release" }
+    maven { url "http://repository.codehaus.org" }
+    maven { url "http://download.java.net/maven/2" }
+    maven { url "http://download.java.net/maven/glassfish" }
+    maven { url "http://m2repo.spockframework.org/snapshots" }
+    maven { url "http://repository.sonatype.org/content/groups/public" }
+    maven { url "https://mvnrepository.com/artifact/com.sun/tools" }
+    maven { url "https://jitpack.io" }
+}

@@ -7,4 +7,4 @@ services:
     ports:
       - 8080:8080
     volumes:
-      - ./build/libs:/opt/liferay/deploy
+      - ./build/libs:/opt/liferay/osgi/modules

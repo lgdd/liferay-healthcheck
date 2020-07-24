@@ -23,8 +23,8 @@ jobs:
           draft: false
           prerelease: false
 
-  build_upload_release_assets:
-    name: Build & Upload Release Assets
+  publish_release:
+    name: Publish Release
     needs: create_release
     runs-on: ubuntu-latest
     strategy:
@@ -62,3 +62,9 @@ jobs:
           asset_path: ./build/libs/com.github.lgdd.liferay.health-${{ env.APP_VERSION }}.jar
           asset_name: com.github.lgdd.liferay.health-${{ env.APP_VERSION }}-jdk${{ matrix.java }}.jar
           asset_content_type: application/octet-stream
+      - name: Rollback Release
+        if: failure() && needs.create_release.outputs.id != ''
+        uses: author/action-rollback@stable
+        with:
+          id: ${{ needs.create_release.id }}
+          tag: ${{ github.ref }}

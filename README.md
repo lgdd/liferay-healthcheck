@@ -22,6 +22,7 @@ Those JAX-RS endpoints are available once Liferay is ready to accept connections
 So why using those endpoints instead of just waiting for `/c/portal/layout/` to be available?
  
 First, because you may have some modules still starting up afterwards, in which case your Liferay instance is not ready yet.
+
 Second, because the readiness and liveness of an application are different states.
 So here we have two different endpoints for the `readiness` probe and the `liveness` probe and each one can be configured to properly reflect those states.
 
@@ -36,10 +37,7 @@ Using osgi/modules allows Liferay to install the module when you see `Starting d
 
 Go to `Control Panel > System Settings > Third Party > Health Check` and adjust the following parameters according to your needs:
 
-- Verify every bundle state (Liveness)
-- Required bundle symbolic names (Liveness)
-- Verify every bundle state (Readiness)
-- Required bundle symbolic names (Readiness)
+![config](docs/config-preview.jpg)
 
 You can see that we have two main parameters: `Verify every bundle state` and `Required bundle symbolic names`.
 They are duplicated in order to define separately the behaviour of the `readiness` probe and `liveness` probe.

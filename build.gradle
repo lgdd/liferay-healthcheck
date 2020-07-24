@@ -4,9 +4,6 @@ apply plugin: "java"
 apply plugin: "com.liferay.target.platform"
 apply plugin: "com.liferay.plugin"
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
-
 dependencies {
     compileOnly group: "biz.aQute.bnd", name: "biz.aQute.bnd.annotation", version: "4.2.0"
 

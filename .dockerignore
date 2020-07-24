@@ -4,6 +4,7 @@ gradlew.bat
 build
 .gradle
 .idea
+.github
 .dockerignore
 .gitignore
 .gitattributes

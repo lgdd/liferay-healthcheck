@@ -28,7 +28,7 @@ So here we have two different endpoints for the `readiness` probe and the `liven
 
 ## Installation
 
-Install the JAR under `$LIFERAY_HOME/osgi/modules`.
+Install the JAR under `$LIFERAY_HOME/osgi/modules`. You'll find two versions for Java 8 & 11 in the [releases section](](https://github.com/lgdd/liferay-healthcheck/releases)).
 
 ⚠️ Do not use `$LIFERAY_HOME/deploy`: the deploy folder is scanned just before Liferay startup which could raise a `404` on those endpoints because the module is not installed yet.
 Using osgi/modules allows Liferay to install the module when you see `Starting dynamic bundles` in the logs.

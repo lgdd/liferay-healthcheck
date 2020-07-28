@@ -2,7 +2,7 @@
 
 A configurable API to help you expose more accurate readiness and liveness probes. 
 
-Inspired by the [healthcheck-servlet](github.com/allen-ziegenfus/healthcheck-servlet) from [Allen Ziegenfus](https://github.com/allen-ziegenfus). 
+Inspired by the [healthcheck-servlet](https://github.com/allen-ziegenfus/healthcheck-servlet) from [Allen Ziegenfus](https://github.com/allen-ziegenfus). 
 
 - [How it works](#how-it-works)
 - [Installation](#installation)

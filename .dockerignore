@@ -8,3 +8,6 @@ build
 .dockerignore
 .gitignore
 .gitattributes
+docs
+LICENSE
+README.md

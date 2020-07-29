@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
 
+import com.github.lgdd.liferay.health.api.HealthCheckStatus;
+
 /**
  * Represent a response body for the readiness and liveness probes and provide information about the
  * status, a message summarizing the situation and a list of issues detected, if any.

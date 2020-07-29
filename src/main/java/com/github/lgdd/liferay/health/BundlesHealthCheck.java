@@ -13,16 +13,25 @@ import org.apache.felix.dm.diagnostics.DependencyGraph.DependencyState;
 import org.apache.felix.dm.diagnostics.MissingDependency;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
 import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.util.tracker.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+
+import com.github.lgdd.liferay.health.api.HealthCheckStatus;
+import com.github.lgdd.liferay.health.api.IndividualBundleHealthCheck;
 
 @Component(
     immediate = true,
     service = BundlesHealthCheck.class
 )
 public class BundlesHealthCheck {
+
+  private ServiceTracker<IndividualBundleHealthCheck, IndividualBundleHealthCheck> individualBundleHealthCheckServiceTracker;
 
   /**
    * Verify every bundle state, if checked in the configuration.
@@ -72,6 +81,8 @@ public class BundlesHealthCheck {
                                          .contains(bundle.getSymbolicName()))
                                      .collect(Collectors.toSet());
 
+    checkIndividualBundleHealth(bundlesFound, issues);
+
     if (bundlesFound.size() != requiredBundleSymbolicNames.size()) {
 
       message = "Found " + bundlesFound.size() + " out of " + requiredBundleSymbolicNames.size()
@@ -111,10 +122,38 @@ public class BundlesHealthCheck {
                               .build();
   }
 
+  private void checkIndividualBundleHealth(Set<Bundle> bundles, List<String> issues) {
+    ServiceReference<IndividualBundleHealthCheck>[] serviceReferences = this.individualBundleHealthCheckServiceTracker.getServiceReferences();
+
+    for(int i = 0; i < serviceReferences.length; i++) {
+      ServiceReference<IndividualBundleHealthCheck> serviceReference = serviceReferences[i];
+      Bundle observedBundle = serviceReference.getBundle();
+      if(bundles.contains(observedBundle)) {
+        IndividualBundleHealthCheck individualBundleHealthCheck = this.individualBundleHealthCheckServiceTracker.getService(serviceReference);
+        String symbolicName = serviceReference.getBundle().getSymbolicName();
+        if(HealthCheckStatus.DOWN.equals(individualBundleHealthCheck.isLive())) {
+          _log.warn("Bundle [" + symbolicName + "] declares being DOWN");
+          issues.add("Bundle [" + symbolicName + "] declares being DOWN");
+        } else {
+          _log.info("Bundle [" + symbolicName + "] declares being UP");
+        }
+      }
+    }
+
+  }
+
   @Activate
   public void activate(BundleContext bundleContext) {
 
     _context = bundleContext;
+    this.individualBundleHealthCheckServiceTracker = new ServiceTracker<IndividualBundleHealthCheck, IndividualBundleHealthCheck>(_context, IndividualBundleHealthCheck.class, null);
+    this.individualBundleHealthCheckServiceTracker.open();
+
+  }
+
+  @Deactivate
+  public void deactivate() {
+    this.individualBundleHealthCheckServiceTracker.close();
   }
 
   private List<String> _getIssues() {

@@ -1,4 +1,4 @@
-package com.github.lgdd.liferay.health;
+package com.github.lgdd.liferay.health.api;
 
 /**
  * @see HealthCheckResponse

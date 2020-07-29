@@ -18,6 +18,8 @@ import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.jaxrs.whiteboard.JaxrsWhiteboardConstants;
 
+import com.github.lgdd.liferay.health.api.HealthCheckStatus;
+
 @Component(
     immediate = true,
     property = {

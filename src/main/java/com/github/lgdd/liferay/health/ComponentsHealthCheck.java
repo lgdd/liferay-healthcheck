@@ -1,5 +1,6 @@
 package com.github.lgdd.liferay.health;
 
+import com.github.lgdd.liferay.health.api.HealthCheckResponse;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.felix.dm.ComponentDeclaration;

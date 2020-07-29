@@ -1,4 +1,4 @@
-package com.github.lgdd.liferay.health;
+package com.github.lgdd.liferay.health.api;
 
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import java.util.ArrayList;
@@ -6,8 +6,6 @@ import java.util.List;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
-
-import com.github.lgdd.liferay.health.api.HealthCheckStatus;
 
 /**
  * Represent a response body for the readiness and liveness probes and provide information about the

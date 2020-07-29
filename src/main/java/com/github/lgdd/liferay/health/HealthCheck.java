@@ -1,5 +1,7 @@
 package com.github.lgdd.liferay.health;
 
+import com.github.lgdd.liferay.health.api.HealthCheckResponse;
+import com.github.lgdd.liferay.health.api.HealthCheckStatus;
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import java.util.Arrays;
 import java.util.Collections;
@@ -17,8 +19,6 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.jaxrs.whiteboard.JaxrsWhiteboardConstants;
-
-import com.github.lgdd.liferay.health.api.HealthCheckStatus;
 
 @Component(
     immediate = true,
@@ -40,6 +40,7 @@ public class HealthCheck
   public Response readiness() {
 
     return _verifyRequiredBundles(
+        HealthCheckProbeType.READINESS,
         _config.bundleSymbolicNamesForReadiness(),
         _config.verifyBundlesStatesForReadiness()
     );
@@ -51,6 +52,7 @@ public class HealthCheck
   public Response liveness() {
 
     return _verifyRequiredBundles(
+        HealthCheckProbeType.LIVENESS,
         _config.bundleSymbolicNamesForLiveness(),
         _config.verifyBundlesStatesForLiveness()
     );
@@ -60,6 +62,8 @@ public class HealthCheck
    * Verify if the required bundles from the configuration are present and in a proper state, i.e.
    * ACTIVE or RESOLVED if the bundle is a fragment.
    *
+   * @param probeType                   type of probe we're looking for (e.g. readiness or
+   *                                    liveness)
    * @param requiredBundleSymbolicNames list of required bundle symbolic names
    * @param isVerificationRequired      true if all bundle states need to be verified (passed to the
    *                                    next method)
@@ -69,7 +73,9 @@ public class HealthCheck
    * @see BundlesHealthCheck#verifyBundles
    * @see HealthCheck#_verifyBundlesStates
    */
-  private Response _verifyRequiredBundles(String[] requiredBundleSymbolicNames,
+  private Response _verifyRequiredBundles(
+      HealthCheckProbeType probeType,
+      String[] requiredBundleSymbolicNames,
       boolean isVerificationRequired) {
 
     Set<String> bundleSymbolicNames =
@@ -79,7 +85,7 @@ public class HealthCheck
 
     if (!bundleSymbolicNames.isEmpty()) {
       HealthCheckResponse requiredBundlesResponse = _bundlesHealthCheck
-          .verifyBundles(bundleSymbolicNames);
+          .verifyBundles(probeType, bundleSymbolicNames);
       if (HealthCheckStatus.DOWN.equals(requiredBundlesResponse.getStatus())) {
         return Response.serverError()
                        .entity(requiredBundlesResponse.toJson())

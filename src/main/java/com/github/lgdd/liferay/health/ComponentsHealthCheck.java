@@ -1,5 +1,6 @@
 package com.github.lgdd.liferay.health;
 
+import com.github.lgdd.liferay.health.api.HealthCheckResponse;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.felix.dm.ComponentDeclaration;
@@ -9,6 +10,9 @@ import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.github.lgdd.liferay.health.api.HealthCheckStatus;
+
 
 @Component(
     immediate = true,

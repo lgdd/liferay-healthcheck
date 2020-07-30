@@ -1,5 +1,8 @@
 package com.github.lgdd.liferay.health;
 
+import com.github.lgdd.liferay.health.api.HealthCheckResponse;
+import com.github.lgdd.liferay.health.api.HealthCheckService;
+import com.github.lgdd.liferay.health.api.HealthCheckStatus;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Dictionary;
@@ -13,8 +16,11 @@ import org.apache.felix.dm.diagnostics.DependencyGraph.DependencyState;
 import org.apache.felix.dm.diagnostics.MissingDependency;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.util.tracker.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,6 +29,8 @@ import org.slf4j.LoggerFactory;
     service = BundlesHealthCheck.class
 )
 public class BundlesHealthCheck {
+
+  private ServiceTracker<HealthCheckService, HealthCheckService> individualBundleHealthCheckServiceTracker;
 
   /**
    * Verify every bundle state, if checked in the configuration.
@@ -57,12 +65,16 @@ public class BundlesHealthCheck {
    * Verify if the required bundles from the configuration are present and in a proper state, i.e.
    * ACTIVE or RESOLVED if the bundle is a fragment.
    *
+   * @param probeType                   type of probe we're looking for (e.g. readiness or
+   *                                    liveness)
    * @param requiredBundleSymbolicNames list of required bundle symbolic names
    * @return a response entity to be sent in the HTTP response body as JSON
    * @see HealthCheckResponse
    * @see HealthCheckStatus
    */
-  public HealthCheckResponse verifyBundles(Set<String> requiredBundleSymbolicNames) {
+  public HealthCheckResponse verifyBundles(
+      HealthCheckProbeType probeType,
+      Set<String> requiredBundleSymbolicNames) {
 
     String message = "No issues with bundles";
     List<String> issues = new ArrayList<>();
@@ -71,6 +83,8 @@ public class BundlesHealthCheck {
                                      .filter(bundle -> requiredBundleSymbolicNames
                                          .contains(bundle.getSymbolicName()))
                                      .collect(Collectors.toSet());
+
+    _checkIndividualBundleHealth(probeType, bundlesFound, issues);
 
     if (bundlesFound.size() != requiredBundleSymbolicNames.size()) {
 
@@ -111,10 +125,67 @@ public class BundlesHealthCheck {
                               .build();
   }
 
+  /**
+   * Check individual bundles health, i.e. the given bundles which are providing a service exposing
+   * readiness and liveness methods with their own implementation, and thus their own definition of
+   * the readiness and liveness for the bundle which can be independent from the bundle state
+   * itself.
+   *
+   * @param probeType type of probe we're looking for (e.g. readiness or liveness)
+   * @param bundles   list of bundles on which we want to gather the custom health check
+   * @param issues    list of issues to populate if any issue is detected in this method
+   * @see HealthCheckService
+   * @see HealthCheckProbeType
+   */
+  private void _checkIndividualBundleHealth(
+      HealthCheckProbeType probeType, Set<Bundle> bundles, List<String> issues) {
+
+    ServiceReference<HealthCheckService>[] serviceReferences =
+        this.individualBundleHealthCheckServiceTracker.getServiceReferences();
+
+    Arrays.stream(serviceReferences).forEach(serviceReference -> {
+      Bundle observedBundle = serviceReference.getBundle();
+      if (bundles.contains(observedBundle)) {
+        HealthCheckService healthCheckService =
+            this.individualBundleHealthCheckServiceTracker.getService(serviceReference);
+        String symbolicName = serviceReference.getBundle().getSymbolicName();
+        HealthCheckResponse healthCheckResponse =
+            _getIndividualBundleHealthCheckResponse(probeType, healthCheckService);
+        if (HealthCheckStatus.DOWN.equals(healthCheckResponse.getStatus())) {
+          _log.warn("Bundle [" + symbolicName + "] declares being DOWN with following issues:");
+          healthCheckResponse.getIssues().forEach(_log::warn);
+          issues.addAll(healthCheckResponse.getIssues());
+        } else {
+          _log.info("Bundle [" + symbolicName + "] declares being UP");
+        }
+      }
+    });
+
+  }
+
+  private HealthCheckResponse _getIndividualBundleHealthCheckResponse(
+      HealthCheckProbeType probeType, HealthCheckService healthCheckService) {
+
+    if (HealthCheckProbeType.READINESS.equals(probeType)) {
+      return healthCheckService.isReady();
+    }
+    return healthCheckService.isLive();
+  }
+
   @Activate
   public void activate(BundleContext bundleContext) {
 
     _context = bundleContext;
+    this.individualBundleHealthCheckServiceTracker = new ServiceTracker<>(
+        _context, HealthCheckService.class, null);
+    this.individualBundleHealthCheckServiceTracker.open();
+
+  }
+
+  @Deactivate
+  public void deactivate() {
+
+    this.individualBundleHealthCheckServiceTracker.close();
   }
 
   private List<String> _getIssues() {

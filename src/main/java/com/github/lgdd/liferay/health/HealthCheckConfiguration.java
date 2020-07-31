@@ -4,8 +4,8 @@ import aQute.bnd.annotation.metatype.Meta;
 
 /**
  * Provide an OSGi configuration to customize what needs to be verified for the readiness probe and
- * the liveness probe respectively. In Liferay, this configuration can be found in Control Panel >
- * System Settings > Third Party > Health Check. Like any OSGi configuration, it can be exported to
+ * the liveness probe respectively. In Liferay, this configuration can be found in Control Panel /
+ * System Settings / Third Party / Health Check. Like any OSGi configuration, it can be exported to
  * a config file and be installed in a Liferay bundle under $LIFERAY_HOME/osgi/configs.
  */
 @Meta.OCD(

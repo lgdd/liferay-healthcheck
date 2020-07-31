@@ -84,7 +84,12 @@ public class BundlesHealthCheck {
                                          .contains(bundle.getSymbolicName()))
                                      .collect(Collectors.toSet());
 
-    _checkIndividualBundleHealth(probeType, bundlesFound, issues);
+    HealthCheckResponse individualBundleHealthResponse =
+        _checkIndividualBundleHealth(probeType, bundlesFound);
+
+    if (HealthCheckStatus.DOWN.equals(individualBundleHealthResponse.getStatus())) {
+      return individualBundleHealthResponse;
+    }
 
     if (bundlesFound.size() != requiredBundleSymbolicNames.size()) {
 
@@ -126,19 +131,21 @@ public class BundlesHealthCheck {
   }
 
   /**
-   * Check individual bundles health, i.e. the given bundles which are providing a service exposing
-   * readiness and liveness methods with their own implementation, and thus their own definition of
-   * the readiness and liveness for the bundle which can be independent from the bundle state
-   * itself.
+   * Check individual health of a list of bundles providing components implementing
+   * HealthCheckService, allowing them to provide their own definition of the readiness and liveness
+   * which can be independent from the bundle state itself.
    *
    * @param probeType type of probe we're looking for (e.g. readiness or liveness)
    * @param bundles   list of bundles on which we want to gather the custom health check
-   * @param issues    list of issues to populate if any issue is detected in this method
+   * @return a response entity to be sent in the HTTP response body as JSON
    * @see HealthCheckService
    * @see HealthCheckProbeType
    */
-  private void _checkIndividualBundleHealth(
-      HealthCheckProbeType probeType, Set<Bundle> bundles, List<String> issues) {
+  private HealthCheckResponse _checkIndividualBundleHealth(
+      HealthCheckProbeType probeType, Set<Bundle> bundles) {
+
+    final List<HealthCheckStatus> downList = new ArrayList<>();
+    final List<String> issues = new ArrayList<>();
 
     ServiceReference<HealthCheckService>[] serviceReferences =
         this.individualBundleHealthCheckServiceTracker.getServiceReferences();
@@ -155,11 +162,29 @@ public class BundlesHealthCheck {
           _log.warn("Bundle [" + symbolicName + "] declares being DOWN with following issues:");
           healthCheckResponse.getIssues().forEach(_log::warn);
           issues.addAll(healthCheckResponse.getIssues());
+          downList.add(HealthCheckStatus.DOWN);
         } else {
           _log.info("Bundle [" + symbolicName + "] declares being UP");
         }
       }
     });
+
+    if (!downList.isEmpty()) {
+      String message = String
+          .format("%d out of %d declares being down.", downList.size(), serviceReferences.length);
+      return HealthCheckResponse
+          .builder()
+          .message(message)
+          .status(HealthCheckStatus.DOWN)
+          .issues(issues)
+          .build();
+    }
+
+    return HealthCheckResponse
+        .builder()
+        .message("No issue from custom health checks")
+        .status(HealthCheckStatus.UP)
+        .build();
 
   }
 

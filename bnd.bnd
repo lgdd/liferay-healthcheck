@@ -1,5 +1,5 @@
 Bundle-Name: Health Check
 Bundle-SymbolicName: com.github.lgdd.liferay.health
-Bundle-Version: 1.1.1
+Bundle-Version: 1.1.2
 Export-Package:\
     com.github.lgdd.liferay.health.api;

@@ -7,6 +7,7 @@ Inspired by the [healthcheck-servlet](https://github.com/allen-ziegenfus/healthc
 - [How it works](#how-it-works)
 - [Installation](#installation)
 - [Configuration](#configuration)
+- [How to implement a custom health check](#how-to-implement-a-custom-health-check)
 - [Quickly try it](#quickly-try-it)
 - [Contribution & questions](#contribution--questions)
 
@@ -45,7 +46,71 @@ They are duplicated in order to define separately the behaviour of the `readines
 - __Verify every bundle state__: it will perform an equivalent to [`dm:wtf`](https://github.com/apache/felix-dev/blob/master/dependencymanager/org.apache.felix.dependencymanager.shell/src/org/apache/felix/dm/shell/DMCommand.java#L551) (Where's The Failure) and determine if one or more OSGi bundles are in an undesired state.
 The desired state is either `ACTIVE` or `RESOLVED` for OSGi Fragments.
 - __Required bundle symbolic names__: it will specifically look for the bundles defined by symbolic names and check if they are present and in a desired state.
-Checking `Verify every bundle state` is not enough to do that since you can have bundles waiting to be installed and just not present in the list of bundles. 
+Checking `Verify every bundle state` is not enough to do that since you can have bundles waiting to be installed and just not present in the list of bundles.
+It also checks or if a custom component implementing [`HealthCheckService`](https://github.com/lgdd/liferay-healthcheck/blob/master/src/main/java/com/github/lgdd/liferay/health/api/HealthCheckService.java) returns `DOWN`.
+This allows you to provide your own definition of readiness and liveness for a given bundle. 
+
+## How to implement a custom health check
+
+As mentioned in the previous section, you can implement your own [`HealthCheckService`](https://github.com/lgdd/liferay-healthcheck/blob/master/src/main/java/com/github/lgdd/liferay/health/api/HealthCheckService.java).
+
+You have to add the dependency:
+
+Maven:
+```
+<dependency>
+  <groupId>com.github.lgdd</groupId>
+  <artifactId>liferay-healthcheck</artifactId>
+  <version>1.1.2</version>
+  <scope>provided</scope>
+</dependency>
+```
+
+Gradle:
+```
+compileOnly group: 'com.github.lgdd', name: 'liferay-healthcheck', version: '1.1.2'
+```
+
+*Note: The scope is `provided` / `compileOnly` because you should deploy this dependency in Liferay and making it available at runtime.*
+
+And create a new class with the following structure:
+
+```
+import com.github.lgdd.liferay.health.api.HealthCheckService;
+
+@Component(
+    immediate = true,
+    service = HealthCheckService.class
+)
+public class MyHealthCheck
+    implements HealthCheckService {
+
+  @Override
+  public HealthCheckResponse isReady() {
+
+    // Add your custom code to verify the health
+    // and adjust the response below accordingly
+
+    return HealthCheckResponse.builder()
+                              .status(HealthCheckStatus.UP)
+                              .message("Everything is awesome")
+                              .build();
+  }
+
+  @Override
+  public HealthCheckResponse isLive() {
+
+    // Add your custom code to verify the health
+    // and adjust the response below accordingly
+
+    return HealthCheckResponse.builder()
+                              .status(HealthCheckStatus.DOWN)
+                              .message("Something's wrong I can feel it")
+                              .issues(issues)
+                              .build();
+  }
+}
+```
 
 ## Quickly try it
 
@@ -56,6 +121,7 @@ Checking `Verify every bundle state` is not enough to do that since you can have
 Now, you can deploy some bundles and change the configuration to test the different responses you can get from `http://localhost:8080/o/health/readiness` or `http://localhost:8080/o/health/liveness`.
 
 If you want to update this code and test it within the Liferay container you just launched, simply run `./gradlew assemble` or `./gradlew -t assemble` to enter in watch mode.
+> You may need to add `-PsonatypeUsername -PsonatypePassword` to the command.
 
 Admin credentials are the default ones: `test@liferay.com:test`. 
 

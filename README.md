@@ -57,7 +57,7 @@ As mentioned in the previous section, you can implement your own [`HealthCheckSe
 You have to add the dependency:
 
 Maven:
-```
+```xml
 <dependency>
   <groupId>com.github.lgdd</groupId>
   <artifactId>liferay-healthcheck</artifactId>
@@ -67,7 +67,7 @@ Maven:
 ```
 
 Gradle:
-```
+```groovy
 compileOnly group: 'com.github.lgdd', name: 'liferay-healthcheck', version: '1.1.2'
 ```
 
@@ -75,7 +75,7 @@ compileOnly group: 'com.github.lgdd', name: 'liferay-healthcheck', version: '1.1
 
 And create a new class with the following structure:
 
-```
+```java
 import com.github.lgdd.liferay.health.api.HealthCheckService;
 
 @Component(

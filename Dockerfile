@@ -2,7 +2,10 @@ FROM azul/zulu-openjdk-alpine:8
 
 WORKDIR /project
 COPY . .
-RUN ./gradlew clean build
+RUN mkdir ~/.gradle && \
+    echo "sonatypeUsername=" >> ~/.gradle/gradle.properties && \
+    echo "sonatypePassword=" >> ~/.gradle/gradle.properties && \
+    ./gradlew assemble
 
 FROM liferay/portal:7.2.1-ga2
 

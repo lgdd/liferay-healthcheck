@@ -55,7 +55,7 @@ Checking `Verify every bundle state` is not enough to do that since you can have
 
 Now, you can deploy some bundles and change the configuration to test the different responses you can get from `http://localhost:8080/o/health/readiness` or `http://localhost:8080/o/health/liveness`.
 
-If you want to update this code and test it within the Liferay container you just launched, simply run `./gradlew build` or `./gradlew -t build` to enter in watch mode.
+If you want to update this code and test it within the Liferay container you just launched, simply run `./gradlew assemble` or `./gradlew -t assemble` to enter in watch mode.
 
 Admin credentials are the default ones: `test@liferay.com:test`. 
 

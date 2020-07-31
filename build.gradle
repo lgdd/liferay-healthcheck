@@ -1,6 +1,8 @@
-version = "1.0.0"
+version = "1.1.0"
 
 apply plugin: "java"
+apply plugin: "maven-publish"
+apply plugin: "signing"
 apply plugin: "com.liferay.target.platform"
 apply plugin: "com.liferay.plugin"
 
@@ -34,7 +36,7 @@ def defaultEncoding = "UTF-8"
 buildscript {
     dependencies {
         classpath group: "com.liferay", name: "com.liferay.gradle.plugins.target.platform", version: "2.1.23"
-        classpath group: 'com.liferay', name: 'com.liferay.gradle.plugins', version: '10.0.18'
+        classpath group: "com.liferay", name: "com.liferay.gradle.plugins", version: "10.0.18"
     }
     repositories {
         jcenter()
@@ -58,4 +60,65 @@ repositories {
     maven { url "http://repository.sonatype.org/content/groups/public" }
     maven { url "https://mvnrepository.com/artifact/com.sun/tools" }
     maven { url "https://jitpack.io" }
+}
+
+task sourcesJar(type: Jar) {
+    from sourceSets.main.allJava
+    archiveClassifier = "sources"
+}
+
+task javadocJar(type: Jar) {
+    from javadoc
+    archiveClassifier = "javadoc"
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId = "com.github.lgdd"
+            artifactId = "liferay-healthcheck"
+            version = "${project.version}"
+
+            from components.java
+
+            artifact sourcesJar
+            artifact javadocJar
+
+            pom {
+                name = "Liferay Health Check"
+                description = "A configurable API to help you expose more accurate readiness and liveness probes"
+                url = "https://github.com/lgdd/liferay-healthcheck"
+
+                licenses {
+                    license {
+                        name = "MIT License"
+                        url = "https://github.com/lgdd/liferay-healthcheck/blob/master/LICENSE"
+                    }
+                }
+                developers {
+                    developer {
+                        id = "lgdd"
+                    }
+                }
+                scm {
+                    connection = "scm:git:git://github.com/lgdd/liferay-healthcheck.git"
+                    developerConnection = "scm:git:ssh://git@github.com:lgdd/liferay-healthcheck.git"
+                    url = "https://github.com/lgdd/liferay-healthcheck"
+                }
+            }
+        }
+    }
+    repositories {
+        maven {
+            url = "https://oss.sonatype.org/service/local/staging/deploy/maven2"
+            credentials {
+                username sonatypeUsername
+                password sonatypePassword
+            }
+        }
+    }
+}
+
+signing {
+    sign publishing.publications.mavenJava
 }

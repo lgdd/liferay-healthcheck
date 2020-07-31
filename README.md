@@ -1,5 +1,10 @@
 # Liferay Health Check
 
+![build-release](https://img.shields.io/github/workflow/status/lgdd/liferay-healthcheck/Release?style=flat-square)
+![latest-tag](https://img.shields.io/github/v/tag/lgdd/liferay-healthcheck?style=flat-square)
+![maven-central](https://img.shields.io/maven-central/v/com.github.lgdd/liferay-healthcheck?style=flat-square)
+![license](https://img.shields.io/github/license/lgdd/liferay-healthcheck?style=flat-square)
+
 A configurable API to help you expose more accurate readiness and liveness probes. 
 
 Inspired by the [healthcheck-servlet](https://github.com/allen-ziegenfus/healthcheck-servlet) from [Allen Ziegenfus](https://github.com/allen-ziegenfus). 

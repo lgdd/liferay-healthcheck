@@ -1,4 +1,4 @@
-version = "2.0.0"
+version = "$appVersion"
 
 apply plugin: "java"
 apply plugin: "maven-publish"
@@ -77,7 +77,7 @@ publishing {
         mavenJava(MavenPublication) {
             groupId = "com.github.lgdd"
             artifactId = "liferay-healthcheck"
-            version = "${project.version}"
+            version = "$appVersion"
 
             from components.java
 

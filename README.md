@@ -66,14 +66,14 @@ Maven:
 <dependency>
   <groupId>com.github.lgdd</groupId>
   <artifactId>liferay-healthcheck</artifactId>
-  <version>1.1.2</version>
+  <version>2.0.0</version>
   <scope>provided</scope>
 </dependency>
 ```
 
 Gradle:
 ```groovy
-compileOnly group: 'com.github.lgdd', name: 'liferay-healthcheck', version: '1.1.2'
+compileOnly group: 'com.github.lgdd', name: 'liferay-healthcheck', version: '2.0.0'
 ```
 
 *Note: The scope is `provided` / `compileOnly` because you should deploy this dependency in Liferay and making it available at runtime.*

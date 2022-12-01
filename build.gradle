@@ -1,4 +1,4 @@
-version = "1.1.2"
+version = "2.0.0"
 
 apply plugin: "java"
 apply plugin: "maven-publish"
@@ -26,9 +26,9 @@ dependencies {
     compileOnly group: "org.projectlombok", name: "lombok", version: "1.18.12"
     annotationProcessor group: "org.projectlombok", name: "lombok", version: "1.18.12"
 
-    targetPlatformBoms group: "com.liferay.portal", name: "release.portal.bom", version: "7.2.1"
-    targetPlatformBoms group: "com.liferay.portal", name: "release.portal.bom.compile.only", version: "7.2.1"
-    targetPlatformBoms group: "com.liferay.portal", name: "release.portal.bom.third.party", version: "7.2.1"
+    targetPlatformBoms group: "com.liferay.portal", name: "release.portal.bom", version: "$liferayVersion"
+    targetPlatformBoms group: "com.liferay.portal", name: "release.portal.bom.compile.only", version: "$liferayVersion"
+    targetPlatformBoms group: "com.liferay.portal", name: "release.portal.bom.third.party", version: "$liferayVersion"
 }
 
 def defaultEncoding = "UTF-8"

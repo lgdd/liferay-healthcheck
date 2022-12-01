@@ -35,7 +35,8 @@ jobs:
       - name: Get App Version
         id: get_version
         run: |
-          echo "::set-env name=APP_VERSION::$(sed -e 's/"//g' <<< cat build.gradle | grep 'version = ' | cut -d'=' -f2 | awk '{$1=$1};1')"
+          echo "APP_VERSION=$(sed -n '1p' gradle.properties | cut -d'=' -f2)" >> $GITHUB_ENV
+          echo "LIFERAY_VERSION=$(sed -n '2p' gradle.properties | cut -d'=' -f2 | cut -d'.' -f1,2)" >> $GITHUB_ENV
       - name: Set up JDK
         id: setup_jdk
         uses: actions/setup-java@v1
@@ -60,7 +61,7 @@ jobs:
         with:
           upload_url: ${{ needs.create_release.outputs.upload_url }}
           asset_path: ./build/libs/com.github.lgdd.liferay.health-${{ env.APP_VERSION }}.jar
-          asset_name: com.github.lgdd.liferay.health-${{ env.APP_VERSION }}-jdk${{ matrix.java }}.jar
+          asset_name: com.github.lgdd.liferay.health-${{ env.APP_VERSION }}+liferay-{{env.LIFERAY_VERSION}}--jdk${{ matrix.java }}.jar
           asset_content_type: application/octet-stream
       - name: Rollback Release
         if: failure() && needs.create_release.outputs.id != ''

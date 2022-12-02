@@ -9,12 +9,20 @@ A configurable API to help you expose more accurate readiness and liveness probe
 
 Inspired by the [healthcheck-servlet](https://github.com/allen-ziegenfus/healthcheck-servlet) from [Allen Ziegenfus](https://github.com/allen-ziegenfus). 
 
+- [Compatibility](#compatibility)
 - [How it works](#how-it-works)
 - [Installation](#installation)
 - [Configuration](#configuration)
 - [How to implement a custom health check](#how-to-implement-a-custom-health-check)
 - [Quickly try it](#quickly-try-it)
 - [Contribution & questions](#contribution--questions)
+
+## Compatibility
+
+| Health Check Version | Liferay Version | Java Version |
+|----------------------|-----------------|--------------|
+| 2.0.0                | 7.4.x           | 8, 11        |
+| 1.1.2                | 7.2.1           | 8, 11        |
 
 ## How it works
 

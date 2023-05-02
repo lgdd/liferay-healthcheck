@@ -1,6 +1,6 @@
 # Liferay Health Check
 
-![build-release](https://img.shields.io/github/workflow/status/lgdd/liferay-healthcheck/Release?style=flat-square)
+![build-release](https://img.shields.io/github/actions/workflow/status/lgdd/liferay-healthcheck/release.yml?style=flat-square)
 ![latest-tag](https://img.shields.io/github/v/tag/lgdd/liferay-healthcheck?style=flat-square)
 ![maven-central](https://img.shields.io/maven-central/v/com.github.lgdd/liferay-healthcheck?style=flat-square)
 ![license](https://img.shields.io/github/license/lgdd/liferay-healthcheck?style=flat-square)

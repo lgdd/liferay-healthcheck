@@ -21,7 +21,7 @@ Inspired by the [healthcheck-servlet](https://github.com/allen-ziegenfus/healthc
 
 | Health Check Version | Liferay Version | Java Version |
 |----------------------|-----------------|--------------|
-| 2.0.0                | 7.4.x           | 8, 11        |
+| 2.0.x                | 7.4.x           | 8, 11        |
 | 1.1.2                | 7.2.1           | 8, 11        |
 
 ## How it works

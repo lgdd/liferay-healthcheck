@@ -7,6 +7,6 @@ COPY . .
 RUN dos2unix gradlew
 RUN ./gradlew assemble -PsonatypeUsername -PsonatypePassword
 
-FROM liferay/portal:7.4.3.52-ga52
+FROM liferay/portal:7.4.3.109-ga109
 
 COPY --chown=liferay:liferay --from=0 /project/build/libs/*.jar /mnt/liferay/files/osgi/modules/
